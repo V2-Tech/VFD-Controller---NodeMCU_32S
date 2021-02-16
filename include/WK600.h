@@ -5,5 +5,5 @@ class ESP32Encoder {
 private:
 
 public:
-    void begin();
+    void init();
 };
