@@ -30,25 +30,38 @@
 #define HOST_NAME "NodeMCUdebug"
 #define USE_MDNS true
 
-//Seriale
-#define RXD2 16
-#define TXD2 17
-#define MAX485_DE_RE GPIO_NUM_32
+//Comunicazione
+#define I2Cscl GPIO_NUM_22
+#define I2Csda GPIO_NUM_21
+#define Serial2TX2 GPIO_NUM_17
+#define Serial2RX2 GPIO_NUM_16
+#define Serial2DERE GPIO_NUM_4
 
 //Encoder
-#define ENCODER_PINA     2   // If the encoder moved in the wrong direction, swap PINA and PINB
-#define ENCODER_PINB     3
-#define ENCODER_BTN      4
+#define InEncoderCLK GPIO_NUM_26
+#define InEncoderDT GPIO_NUM_25
+#define InEncoderBUT GPIO_NUM_33
 #define ENCODER_STEPS_PER_NOTCH    4   // Change this depending on which encoder is used
 #define ENCODER_HOLDTIME 500 //ms
 
-//INPUT
-#define OUTPUT_RUN        13
-#define OUTPUT_RESET      12
+//Stepper
+#define InStepperAlarm GPIO_NUM_36 //(serve pull-up ext)
+#define InStepperInPos GPIO_NUM_39 //(serve pull-up ext)
+#define OutStepperEN GPIO_NUM_23
+#define OutStepperDIR GPIO_NUM_19
+#define OutStepperSTEP GPIO_NUM_18
 
-//OUTPUT
-#define INPUT_START      6
-#define INPUT_ERROR       7
+// Generic INPUT
+#define PulsStartMotore GPIO_NUM_14
+#define PulsStopMotore GPIO_NUM_27
+#define PulsStartTaglio GPIO_NUM_12
+#define PulsStopTaglio GPIO_NUM_13
+#define FcsDestro GPIO_NUM_32
+#define FcsSinistro GPIO_NUM_5
+#define InVFDErr GPIO_NUM_34 //(serve pull-up ext)
+
+//Generic OUTPUT
+//None for now
 
 //PULSANTI
 #define PULS_HOLD_TIME    2000 //ms
@@ -93,11 +106,6 @@ void postTransmission();
 //Encoder
 void timerIsr();
 
-//Inizializzazioni
-void InitSerial();
-void InitEncoder();
-void InitGraphic();
-
 /////////////////////////////////////////////////////             
                /* VARIABILI GLOBALI */
 /////////////////////////////////////////////////////
@@ -122,11 +130,26 @@ class gvl
 };
 */
 
-class Global{
+class Global
+{
     public:
+        Global();
+
+        //Variabili
         int16_t EncoderValue;
+
+        //Funzioni
+        void init();
+
     private:
+        //Variabili
+        bool xFirstCycle;
+
+        //Funzioni
 };
 
 extern Global GVL;
+extern RemoteDebug Debug;
+extern ModbusMaster node;
+extern ESP32Encoder encoder;
 #endif

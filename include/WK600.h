@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
-class ESP32Encoder {
+class WK600 {
 private:
 
 public:

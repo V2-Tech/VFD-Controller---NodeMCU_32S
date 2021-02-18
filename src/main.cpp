@@ -14,7 +14,7 @@ void setup() {
   Serial.println("__ OK __");
   
   //Serial 2
-  Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
+  Serial2.begin(115200, SERIAL_8N1, Serial2RX2, Serial2TX2);
   while (!Serial2) {}
   Serial.println("__ OK2 __");
   
@@ -60,7 +60,7 @@ void setup() {
   /////////////////////////////////////////////////////             
           /* REMOTE DEBUGGER inizialization */
   /////////////////////////////////////////////////////
-   String hostNameWifi = HOST_NAME;
+  String hostNameWifi = HOST_NAME;
   hostNameWifi.concat(".local");
   #ifdef USE_MDNS  // Use the MDNS ?
     if (MDNS.begin(HOST_NAME)) {
@@ -91,10 +91,21 @@ void setup() {
   /////////////////////////////////////////////////////             
               /* IO inizialization */
   /////////////////////////////////////////////////////
-  pinMode(MAX485_DE_RE, OUTPUT);
-  pinMode(GPIO_NUM_32, OUTPUT);
-  pinMode(2, OUTPUT);
-  digitalWrite(MAX485_DE_RE, LOW);
+  pinMode(Serial2DERE, OUTPUT);
+  pinMode(OutStepperEN, OUTPUT);
+  pinMode(OutStepperDIR, OUTPUT);
+  pinMode(OutStepperSTEP, OUTPUT);
+  pinMode(InStepperAlarm, INPUT_PULLUP);
+  pinMode(InStepperInPos, INPUT_PULLUP);
+  pinMode(PulsStartMotore, INPUT_PULLUP);
+  pinMode(PulsStopMotore, INPUT_PULLUP);
+  pinMode(PulsStartTaglio, INPUT_PULLUP);
+  pinMode(PulsStopTaglio, INPUT_PULLUP);
+  pinMode(FcsDestro, INPUT_PULLUP);
+  pinMode(FcsSinistro, INPUT_PULLUP);
+  pinMode(InVFDErr, INPUT_PULLUP);
+
+  digitalWrite(Serial2DERE, LOW);
 
   /////////////////////////////////////////////////////             
               /* MODBUS inizialization */
@@ -102,51 +113,39 @@ void setup() {
   node.begin(10, Serial2);
   node.preTransmission(preTransmission);
   node.postTransmission(postTransmission);
+
+  /////////////////////////////////////////////////////             
+              /* ENCODER inizialization */
+  /////////////////////////////////////////////////////
+  ESP32Encoder::useInternalWeakPullResistors=UP;
+	encoder.attachHalfQuad(InEncoderDT, InEncoderCLK);
+	encoder.setCount(1);
 }
-uint16_t tempVal;
+
+unsigned long encoderLastToggled;
+bool encoderPaused = false;
 
 void loop() {
   while(1){
     ArduinoOTA.handle();
-     
-    if ((millis() - mLastTime) >= 1000) { // Each second
-      // Time
-      mLastTime = millis();
-      mTimeSeconds++;
+    GVL.init();
+    Serial.println("Encoder count = "+String((int32_t)encoder.getCount()));
+    delay(100);
 
-      // Blink the led
-      digitalWrite(2, !digitalRead(2));
+    // every 5 seconds toggle encoder 2
+    if (millis() - encoderLastToggled >= 5000) {
+      if(encoderPaused) {
+        Serial.println("Resuming Encoder");
+        encoder.resumeCount();
+      } else {
+        Serial.println("Paused Encoder");
+        encoder.pauseCount();
+      }
 
-      // Debug the time (verbose level)
-      debugV("* Time: %u seconds (VERBOSE)", mTimeSeconds);
-      if (mTimeSeconds % 5 == 0) { // Each 5 seconds
-        // Debug levels
-        debugW("DEVICE CONNECTED");
-        // Call a function
-      }
-      /*
-      uint8_t Return = node.readHoldingRegisters(0x1000,9);
-      if (Return==node.ku8MBSuccess){
-        for (int i=0; i<10; i++){
-          uint16_t temp = node.getResponseBuffer(i);
-          uint16_t k = 1000 + i;
-          Serial.printf("\nValore registro %u: ",k);
-          Serial.print(temp);
-        }
-        node.clearResponseBuffer();
-      }
-      else{
-        Serial.printf("\nErrore lettura registro: %u",Return);
-        for (int i=0; i<10; i++){
-          uint16_t temp = node.getResponseBuffer(i);
-          uint16_t k = 1000 + i;
-          Serial.printf("\nValore registro %u: ",k);
-          Serial.print(temp);
-        }
-        node.clearResponseBuffer();
-      }
-      */
+      encoderPaused = !encoderPaused;
+      encoderLastToggled = millis();
     }
+    /*
     uint8_t Return = node.readHoldingRegisters(0x1000,9);
       if (Return==node.ku8MBSuccess){
         for (int i=0; i<10; i++){
@@ -168,10 +167,10 @@ void loop() {
         node.clearResponseBuffer();
       }
     Return = node.writeSingleRegister(0x1000,tempVal);
-    tempVal++;
+    */
+
     // RemoteDebug handle
     Debug.handle();
-
     // Give a time for ESP
     yield();
   }

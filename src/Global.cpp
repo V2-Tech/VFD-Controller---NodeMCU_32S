@@ -1,7 +1,18 @@
 #include "Global.h"
 
 Global GVL;
+RemoteDebug Debug;
+ModbusMaster node;
 
-void test(){
-    GVL.EncoderValue = 0;
+Global::Global()
+{
+    xFirstCycle = false;
+}
+
+void Global::init()
+{
+    if (!Global::xFirstCycle)
+    {
+        debugW("DEVICE CONNECTED");
+    }
 }
