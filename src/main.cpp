@@ -110,7 +110,7 @@ void setup() {
   /////////////////////////////////////////////////////             
               /* MODBUS inizialization */
   /////////////////////////////////////////////////////
-  node.begin(10, Serial2);
+  node.begin(DRIVE_MODBUS_ID, Serial2);
   node.preTransmission(preTransmission);
   node.postTransmission(postTransmission);
 
@@ -122,29 +122,11 @@ void setup() {
 	encoder.setCount(1);
 }
 
-unsigned long encoderLastToggled;
-bool encoderPaused = false;
-
 void loop() {
   while(1){
     ArduinoOTA.handle();
     GVL.init();
-    Serial.println("Encoder count = "+String((int32_t)encoder.getCount()));
-    delay(100);
 
-    // every 5 seconds toggle encoder 2
-    if (millis() - encoderLastToggled >= 5000) {
-      if(encoderPaused) {
-        Serial.println("Resuming Encoder");
-        encoder.resumeCount();
-      } else {
-        Serial.println("Paused Encoder");
-        encoder.pauseCount();
-      }
-
-      encoderPaused = !encoderPaused;
-      encoderLastToggled = millis();
-    }
     /*
     uint8_t Return = node.readHoldingRegisters(0x1000,9);
       if (Return==node.ku8MBSuccess){
