@@ -14,3 +14,4 @@ const char* password = "12345678";
 
 ESP32Encoder encoder;
 Menu menu;
+LiquidCrystal_I2C lcd(0x27,LCD_COL_NUM,LCD_ROW_NUM);
