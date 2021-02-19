@@ -22,6 +22,8 @@
 #include <Ticker.h>
 #include "WK600.h"
 #include "Grafica.h"
+#include <array>
+#include <string>
 
 /////////////////////////////////////////////////////             
                /* COSTANTI */
@@ -78,6 +80,7 @@
 #define LCD_COL_NUM 20
 #define BLINKTIME 500 //ms
 #define CYCLEREADTIME 1000 //ms
+#define PAGES_NUM 2
 
 //INDIRIZZI MODBUS WK600
 #define DRIVE_MODBUS_ID 0x0A
@@ -139,6 +142,7 @@ class Global
 
         //Variabili
         int16_t EncoderValue;
+        String MenuPages[PAGES_NUM][LCD_ROW_NUM];
 
         //Funzioni
         void init();

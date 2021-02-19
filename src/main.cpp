@@ -120,6 +120,8 @@ void setup() {
   ESP32Encoder::useInternalWeakPullResistors=UP;
 	encoder.attachHalfQuad(InEncoderDT, InEncoderCLK);
 	encoder.setCount(1);
+
+  menu.begin(lcd, GVL.MenuPages, PAGES_NUM, LCD_ROW_NUM);
 }
 
 void loop() {
