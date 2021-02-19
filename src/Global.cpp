@@ -3,6 +3,7 @@
 Global GVL;
 RemoteDebug Debug;
 ModbusMaster node;
+Button EncBtn(InEncoderBUT);
 
 Global::Global()
 {
@@ -22,5 +23,6 @@ void Global::init()
     if (!Global::xFirstCycle)
     {
         debugW("DEVICE CONNECTED");
+        Global::xFirstCycle = true;
     }
 }

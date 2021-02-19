@@ -160,4 +160,5 @@ extern ModbusMaster node;
 extern ESP32Encoder encoder;
 extern LiquidCrystal_I2C lcd;
 extern Menu menu;
+extern Button EncBtn;
 #endif

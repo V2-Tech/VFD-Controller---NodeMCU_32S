@@ -121,14 +121,14 @@ void setup() {
 	encoder.attachHalfQuad(InEncoderDT, InEncoderCLK);
 	encoder.setCount(1);
 
-  menu.begin(lcd, GVL.MenuPages, PAGES_NUM, LCD_ROW_NUM);
+  menu.begin(lcd, GVL.MenuPages, PAGES_NUM, LCD_ROW_NUM, encoder, EncBtn);
 }
 
 void loop() {
   while(1){
     ArduinoOTA.handle();
     GVL.init();
-
+    menu.update();
     /*
     uint8_t Return = node.readHoldingRegisters(0x1000,9);
       if (Return==node.ku8MBSuccess){
