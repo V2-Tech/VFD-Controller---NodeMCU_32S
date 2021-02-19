@@ -11,3 +11,6 @@ void postTransmission()
 
 const char* ssid     = "VFD-Manager-AP";
 const char* password = "12345678";
+
+ESP32Encoder encoder;
+Menu menu;

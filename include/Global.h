@@ -21,6 +21,7 @@
 #include <JC_Button.h>
 #include <Ticker.h>
 #include "WK600.h"
+#include "Grafica.h"
 
 /////////////////////////////////////////////////////             
                /* COSTANTI */
@@ -153,4 +154,5 @@ extern Global GVL;
 extern RemoteDebug Debug;
 extern ModbusMaster node;
 extern ESP32Encoder encoder;
+extern Menu menu;
 #endif

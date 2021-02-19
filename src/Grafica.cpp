@@ -1,3 +1,6 @@
 #include "Grafica.h"
 
-ESP32Encoder encoder;
+void Menu::begin(uint8_t PageNumber, uint8_t PageRows[])
+{
+
+}
