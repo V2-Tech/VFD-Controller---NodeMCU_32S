@@ -2,8 +2,9 @@
 #include <Arduino.h>
 
 class WK600 {
-private:
+    public:
+        WK600();
+        void begin();
+    private:
 
-public:
-    void init();
 };

@@ -22,7 +22,7 @@
 #include <Ticker.h>
 #include "WK600.h"
 #include "Grafica.h"
-#include <array>
+#include <vector>
 #include <string>
 
 /////////////////////////////////////////////////////             
@@ -45,7 +45,7 @@
 #define InEncoderDT GPIO_NUM_25
 #define InEncoderBUT GPIO_NUM_33
 #define ENCODER_STEPS_PER_NOTCH    4   // Change this depending on which encoder is used
-#define ENCODER_HOLDTIME 500 //ms
+#define ENCODER_HOLDTIME 1000 //ms
 
 //Stepper
 #define InStepperAlarm GPIO_NUM_36 //(serve pull-up ext)
@@ -142,7 +142,9 @@ class Global
 
         //Variabili
         int16_t EncoderValue;
-        String MenuPages[PAGES_NUM][LCD_ROW_NUM];
+        std::vector<MenuEntityList> MenuEntitys;
+        //String MenuPages[PAGES_NUM][LCD_ROW_NUM];
+        Coord MenuEntityPos[];
 
         //Funzioni
         void init();
@@ -161,4 +163,6 @@ extern ESP32Encoder encoder;
 extern LiquidCrystal_I2C lcd;
 extern Menu menu;
 extern Button EncBtn;
+extern WK600 vfd;
+
 #endif
