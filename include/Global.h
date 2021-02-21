@@ -69,12 +69,6 @@
 //PULSANTI
 #define PULS_HOLD_TIME    2000 //ms
 
-//PARAMETRI MOTORE
-#define MOTOR_RPM 2850 //rpm
-#define MOTOR_IN 5 //A
-#define MOTOR_VN 400 // V
-#define MOTOR_MAX_HZ 50 //HZ
-
 //PARAMETRI LCD
 #define LCD_ROW_NUM 4
 #define LCD_COL_NUM 20
@@ -82,25 +76,8 @@
 #define CYCLEREADTIME 1000 //ms
 #define PAGES_NUM 2
 
-//INDIRIZZI MODBUS WK600
+//PARAMETRI INVERTER
 #define DRIVE_MODBUS_ID 0x0A
-#define SPEED_ADDR 0x1000
-#define COMMANDS_ADDR 0x2000
-#define MONITOR_OUTPOWER_ADDR 0x7005
-#define MONITOR_FDK_SPEED_ADDR 0x7013
-#define MONITOR_COMM_ADDR 0x701C
-#define MONITOR_STATUS_ADDR 0x703D
-#define MONITOR_FAULTCODE_ADDR 0x703E
-#define COMMAND_RUN 0x0001
-#define COMMAND_STOP 0x0000
-#define COMMAND_RESET 0x0010
-
-//STATO DRIVE WK600
-#define STATUS_RUN 0b00011
-#define STATUS_STOP 0b00000
-#define STATUS_ACCEL 0b00100
-#define STATUS_DECEL 0b01000
-
 /////////////////////////////////////////////////////             
                /* FUNZIONI GLOBALI*/
 /////////////////////////////////////////////////////
@@ -145,6 +122,7 @@ class Global
         std::vector<MenuEntityList> MenuEntitys;
         //String MenuPages[PAGES_NUM][LCD_ROW_NUM];
         Coord MenuEntityPos[];
+        MotorParam motorParameter;
 
         //Funzioni
         void init();
