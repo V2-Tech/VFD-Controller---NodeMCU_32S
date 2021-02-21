@@ -115,13 +115,17 @@ void setup() {
   node.postTransmission(postTransmission);
 
   /////////////////////////////////////////////////////             
-              /* GENERAL inizialization */
+              /* ENCODER inizialization */
   /////////////////////////////////////////////////////
   ESP32Encoder::useInternalWeakPullResistors=UP;
 	encoder.attachHalfQuad(InEncoderDT, InEncoderCLK);
 	encoder.setCount(1);
-
+  
+  /////////////////////////////////////////////////////             
+              /* GENERAL inizialization */
+  /////////////////////////////////////////////////////
   menu.begin(lcd, GVL.MenuEntitys, encoder, EncBtn, vfd);
+  vfd.begin(node);
 }
 
 void loop() {
