@@ -33,6 +33,7 @@ class Menu{
         void begin(LiquidCrystal_I2C &lcd, std::vector<MenuEntityList> menuEntityList, ESP32Encoder &enc, Button &encBtn, WK600 &vfd);
         void update();
         uint32_t EncoderValue;
+        uint32_t VFDActSpeed;
     private:
         LiquidCrystal_I2C* _lcd;
         ESP32Encoder* _enc;

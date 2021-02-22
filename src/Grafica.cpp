@@ -48,8 +48,10 @@ void Menu::begin(LiquidCrystal_I2C &lcd, std::vector<MenuEntityList> menuEntityL
             _PageQuantity = _menuArray[k].position.page + 1;
         }
     }
-
     _lcd->setCursor(0,0);
+
+    //Ricavo i valori attuali dell inverter
+    
 }
 
 void Menu::update()

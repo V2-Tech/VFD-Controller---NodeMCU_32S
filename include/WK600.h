@@ -12,9 +12,9 @@
 #define SET_SPEED_ADDR 0x7001 //Hz*100
 #define MONITOR_INVOLTAGE_ADDR 0x7002 //V*10
 #define MONITOR_OUTVOLTAGE_ADDR 0x7003 //V
-#define MONITOR_OUTVOLTAGE_ADDR 0x7004 //A*100
+#define MONITOR_OUTCURRENT_ADDR 0x7004 //A*100
 #define MONITOR_OUTPOWER_ADDR 0x7005 //W
-#define MONITOR_FDK_SPEED_ADDR 0x703C //%*100
+#define MONITOR_ACTSPEED_ADDR 0x703C //%*100
 #define MONITOR_SETPOINT 0x701C //%*100
 #define MONITOR_STATUS_ADDR 0x703D // Serve testarlo
 #define MONITOR_FAULTCODE_ADDR 0x703E //Guardare manuale. Enumeratore decodificatrore?
@@ -32,6 +32,7 @@ enum VFDCommand : uint16_t
 enum VFDStatus : uint16_t
 {
     //STATO DRIVE WK600
+    STATUS_ERROR = 0xFFFF,
     STATUS_RUN_FORW = 0x0001,
     STATUS_RUN_REV = 0x0002,
     STATUS_STOP = 0x0003
@@ -57,6 +58,7 @@ class WK600
         void free_stop();
         void reset();
         int16_t getActSetpoint();
+        int16_t getActSpeed();
         int16_t getActVin();
         int16_t getActVout();
         uint16_t getActOutCurrent();
