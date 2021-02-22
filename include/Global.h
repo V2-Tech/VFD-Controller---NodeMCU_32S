@@ -120,16 +120,14 @@ class Global
         //Variabili
         int16_t EncoderValue;
         std::vector<MenuEntityList> MenuEntitys;
-        //String MenuPages[PAGES_NUM][LCD_ROW_NUM];
         Coord MenuEntityPos[];
         MotorParam motorParameter;
 
         //Funzioni
-        void init();
+        void begin();
 
     private:
         //Variabili
-        bool xFirstCycle;
 
         //Funzioni
 };

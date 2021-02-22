@@ -126,12 +126,12 @@ void setup() {
   /////////////////////////////////////////////////////
   menu.begin(lcd, GVL.MenuEntitys, encoder, EncBtn, vfd);
   vfd.begin(node);
+  GVL.begin();
 }
 
 void loop() {
   while(1){
     ArduinoOTA.handle();
-    GVL.init();
     menu.update();
     
     /*

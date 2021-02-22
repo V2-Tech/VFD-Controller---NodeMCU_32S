@@ -43,7 +43,7 @@ void WK600::run_rev()
 {
     uint8_t Return = _CommMaster->writeSingleRegister(COMMANDS_ADDR, VFDCommand::COMMAND_REV);
     if (Return==_CommMaster->ku8MBSuccess){
-    _CommMaster->clearTransmitBuffer();
+        _CommMaster->clearTransmitBuffer();
     }
     else{
         #ifdef COMM_DEBUG
@@ -56,7 +56,7 @@ void WK600::stop()
 {
     uint8_t Return = _CommMaster->writeSingleRegister(COMMANDS_ADDR, VFDCommand::COMMAND_STOP);
     if (Return==_CommMaster->ku8MBSuccess){
-    _CommMaster->clearTransmitBuffer();
+        _CommMaster->clearTransmitBuffer();
     }
     else{
         #ifdef COMM_DEBUG
@@ -70,7 +70,7 @@ void WK600::free_stop()
 {
     uint8_t Return = _CommMaster->writeSingleRegister(COMMANDS_ADDR, VFDCommand::COMMAND_FREE_STOP);
     if (Return==_CommMaster->ku8MBSuccess){
-    _CommMaster->clearTransmitBuffer();
+        _CommMaster->clearTransmitBuffer();
     }
     else{
         #ifdef COMM_DEBUG
@@ -84,7 +84,7 @@ void WK600::reset()
 {
     uint8_t Return = _CommMaster->writeSingleRegister(COMMANDS_ADDR, VFDCommand::COMMAND_RESET);
     if (Return==_CommMaster->ku8MBSuccess){
-    _CommMaster->clearTransmitBuffer();
+        _CommMaster->clearTransmitBuffer();
     }
     else{
         #ifdef COMM_DEBUG
@@ -94,7 +94,30 @@ void WK600::reset()
     }    
 }
 
-uint16_t WK600::getMonitorValue(uint16_t addr)
+int16_t WK600::getActSetpoint()
 {
-    
+    uint8_t Return = _CommMaster->readHoldingRegisters(SETPOINT_ADDR,1);
+    if (Return==_CommMaster->ku8MBSuccess){
+        _CommMaster->clearResponseBuffer();
+    }
+    else{
+        #ifdef COMM_DEBUG
+            Serial.printf("\nErrore lettura setpoint: %u",Return);
+            _CommMaster->clearResponseBuffer();
+        #endif
+    } 
+}
+
+int16_t WK600::getActVin()
+{
+    uint8_t Return = _CommMaster->readHoldingRegisters(MONITOR_INVOLTAGE_ADDR,1);
+    if (Return==_CommMaster->ku8MBSuccess){
+        _CommMaster->clearResponseBuffer();
+    }
+    else{
+        #ifdef COMM_DEBUG
+            Serial.printf("\nErrore lettura tensione ingresso Vin: %u",Return);
+            _CommMaster->clearResponseBuffer();
+        #endif
+    } 
 }

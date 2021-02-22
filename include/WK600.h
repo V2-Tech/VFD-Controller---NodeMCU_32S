@@ -10,6 +10,9 @@
 #define COMMANDS_ADDR 0x2000 
 #define STATUS_ADDR 0x3000
 #define SET_SPEED_ADDR 0x7001 //Hz*100
+#define MONITOR_INVOLTAGE_ADDR 0x7002 //V*10
+#define MONITOR_OUTVOLTAGE_ADDR 0x7003 //V
+#define MONITOR_OUTVOLTAGE_ADDR 0x7004 //A*100
 #define MONITOR_OUTPOWER_ADDR 0x7005 //W
 #define MONITOR_FDK_SPEED_ADDR 0x703C //%*100
 #define MONITOR_SETPOINT 0x701C //%*100
@@ -53,7 +56,13 @@ class WK600
         void stop();
         void free_stop();
         void reset();
-        uint16_t getMonitorValue(uint16_t addr);
+        int16_t getActSetpoint();
+        int16_t getActVin();
+        int16_t getActVout();
+        uint16_t getActOutCurrent();
+        uint16_t getActOutPower();
+        int16_t getFaultCode();
+        VFDStatus getStatus();
     private:
         ModbusMaster* _CommMaster;
 };

@@ -7,7 +7,6 @@ Button EncBtn(InEncoderBUT);
 
 Global::Global()
 {
-    xFirstCycle = false;
     MotorParam motorParameter = {2850, 5, 400, 50};
     MenuEntitys.push_back({"RPM DES: ", {4,0,0}}); //{Stringa, x-pos, y-pos, pag}
     MenuEntitys.push_back({"ACT RPM: ", {4,1,0}});
@@ -16,13 +15,9 @@ Global::Global()
     MenuEntitys.push_back({"ERR:", {12,3,0}});
 }
 
-void Global::init()
+void Global::begin()
 {
-    if (!Global::xFirstCycle)
-    {
-        debugW("DEVICE CONNECTED");
-        Global::xFirstCycle = true;
-    }
+    debugW("DEVICE CONNECTED");
     vfd.run_forw();
-    vfd.setSpeed(50);
+    vfd.setSpeed(50);   
 }
