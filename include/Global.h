@@ -124,6 +124,7 @@ class Global
         MotorParam motorParameter;
         byte SymbolRightArrow[];
         byte SymbolLeftArrow[];
+        byte SymbolSelected[];
 
         //Funzioni
         void begin();
