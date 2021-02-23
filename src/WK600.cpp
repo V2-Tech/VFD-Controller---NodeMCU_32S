@@ -114,7 +114,7 @@ void WK600::reset()
 
 int16_t WK600::getActSetpoint()
 {
-    uint8_t Return = _CommMaster->readHoldingRegisters(SETPOINT_ADDR,1);
+    uint8_t Return = _CommMaster->readHoldingRegisters(MONITOR_SETSPEED_ADDR,1);
     if (Return==_CommMaster->ku8MBSuccess){
         int16_t tempVal = _CommMaster->getResponseBuffer(0)/100;
         #ifdef COMM_DEBUG
@@ -279,4 +279,31 @@ VFDStatus WK600::getStatus()
             _CommMaster->clearResponseBuffer();
         #endif
     } 
+}
+
+int16_t WK600::PercentToRPM(int16_t speedPercent, MotorParam motorParameter)
+{
+    float y, m;
+    int16_t tempPercent = abs(speedPercent);
+    m = motorParameter.RPMmax/100;
+    y = m*tempPercent;
+    return y;
+}
+
+int16_t  WK600::HZToPercent(int16_t vfdHz, MotorParam motorParameter)
+{
+    float y, m;
+    int16_t tempHz = abs(vfdHz);
+    m = 100/motorParameter.Freq;
+    y = m*tempHz;
+    return y;
+}
+
+int16_t  WK600::HZToRPM(int16_t vfdHz, MotorParam motorParameter)
+{
+    float y, m;
+    int16_t tempHz = abs(vfdHz);
+    m = motorParameter.RPMmax/motorParameter.Freq;
+    y = m*tempHz;
+    return y;
 }

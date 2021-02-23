@@ -132,7 +132,7 @@ void setup() {
 void loop() {
   while(1){
     ArduinoOTA.handle();
-    menu.update();
+    menu.EncoderUpdate(0, 100);
     
     /*
     uint8_t Return = node.readHoldingRegisters(0x1000,9);

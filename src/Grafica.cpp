@@ -49,32 +49,104 @@ void Menu::begin(LiquidCrystal_I2C &lcd, std::vector<MenuEntityList> menuEntityL
         }
     }
     _lcd->setCursor(0,0);
-
-    //Ricavo i valori attuali dell inverter
-    
+    _lcd->cursor_off();
 }
 
-void Menu::update()
-{
-    EncoderUpdate();
-}
-
-void Menu::EncoderUpdate()
+void Menu::EncoderUpdate(uint16_t lowerLimit, uint16_t upperLimit)
 {
     _encBtn->read();
     if(_tempEncoderCount != _enc->getCount())
     {
-        _tempEncoderCount = _enc->getCount();
-        EncoderValue = (int32_t)_enc->getCount();
+        if (_enc->getCount()<=upperLimit)
+        {
+            _tempEncoderCount = _enc->getCount();
+            EncoderValue = (int32_t)_enc->getCount();
+        }
+        else
+        {
+            _tempEncoderCount = upperLimit;
+            EncoderValue = (int32_t)upperLimit;
+            _enc->setCount(upperLimit);
+        }
+        if (_enc->getCount()>=lowerLimit)
+        {
+            _tempEncoderCount = _enc->getCount();
+            EncoderValue = (int32_t)_enc->getCount();
+        }
+        else
+        {
+            _tempEncoderCount = lowerLimit;
+            EncoderValue = (int32_t)lowerLimit;
+            _enc->setCount(lowerLimit);
+        }
         #ifdef ENC_DEBUG
-            Serial.println("Encoder count = "+String((int32_t)_enc->getCount()));
+            Serial.println("\nEncoder count = "+String((int32_t)_enc->getCount()));
         #endif
     }
     if(_encBtn->wasPressed())
     {
         #ifdef ENC_DEBUG
-            Serial.println("Encoder button pressed");
+            Serial.println("\nEncoder button pressed");
         #endif
         menuMode = MENU_EDIT;
+    }
+}
+
+void Menu::MenuValueUpdate(uint8_t MenuEntityNum, uint32_t value, MenuValueType ValueType)
+{
+    if (ValueType==MenuValueType::NUMBER)
+    {
+        std::ostringstream ostr;
+        ostr << _menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() +  1;
+        std::string tempStr = ostr.str();
+        int16_t tempStrLength = tempStr.length();
+        ostr << value;
+        tempStr = ostr.str();
+        tempStrLength = tempStr.length();
+        #ifdef LCD_DEBUG
+            Serial.printf("\nMenu value update leght check result: %u",tempStrLength);
+        #endif
+        if (tempStrLength<=LCD_COL_NUM)
+        {
+            _lcd->setCursor(_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 1, _menuArray[MenuEntityNum].position.y);
+            _lcd->print(value);
+            #ifdef LCD_DEBUG
+                Serial.printf("\nCoord X: %u",_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 1);
+                Serial.printf("\nCoord Y: %u",_menuArray[MenuEntityNum].position.y);
+                Serial.printf("\nValue: %u",value);  
+            #endif
+        }
+        else
+        {
+            #ifdef LCD_DEBUG
+                Serial.printf("\nMenu value update leght check failed. Total length is: %u",tempStrLength);
+            #endif
+        }
+    }
+    else
+    {
+        std::ostringstream ostr;
+        ostr << _menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 2;
+        std::string tempStr = ostr.str();
+        int16_t tempStrLength = tempStr.length();
+        #ifdef LCD_DEBUG
+            Serial.printf("\nMenu value update leght check result: %u",tempStrLength);
+        #endif
+        if (tempStrLength<=LCD_COL_NUM)
+        {
+            _lcd->setCursor(_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 2, _menuArray[MenuEntityNum].position.y);
+            _lcd->write(value);
+            #ifdef LCD_DEBUG
+                Serial.printf("\nCoord X: %u",_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 2);
+                Serial.printf("\nCoord Y: %u",_menuArray[MenuEntityNum].position.y);
+                Serial.printf("\nSymbol number: %u",value);  
+            #endif
+        }
+        else
+        {
+            #ifdef LCD_DEBUG
+                Serial.printf("\nMenu value update leght check failed. Total length is: %u",tempStrLength);
+            #endif
+        }     
     }
 }

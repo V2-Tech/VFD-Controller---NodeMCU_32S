@@ -9,7 +9,7 @@
 #define SETPOINT_ADDR 0x1000 //%*100
 #define COMMANDS_ADDR 0x2000 
 #define STATUS_ADDR 0x3000
-#define SET_SPEED_ADDR 0x7001 //Hz*100
+#define MONITOR_SETSPEED_ADDR 0x7001 //Hz*100
 #define MONITOR_INVOLTAGE_ADDR 0x7002 //V*10
 #define MONITOR_OUTVOLTAGE_ADDR 0x7003 //V
 #define MONITOR_OUTCURRENT_ADDR 0x7004 //A*100
@@ -65,6 +65,9 @@ class WK600
         uint16_t getActOutPower();
         int16_t getFaultCode();
         VFDStatus getStatus();
+        int16_t PercentToRPM(int16_t speedPercent, MotorParam motorParameter);
+        int16_t HZToPercent(int16_t vfdHz, MotorParam motorParameter);
+        int16_t HZToRPM(int16_t vfdHz, MotorParam motorParameter);
     private:
         ModbusMaster* _CommMaster;
 };

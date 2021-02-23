@@ -122,6 +122,8 @@ class Global
         std::vector<MenuEntityList> MenuEntitys;
         Coord MenuEntityPos[];
         MotorParam motorParameter;
+        byte SymbolRightArrow[];
+        byte SymbolLeftArrow[];
 
         //Funzioni
         void begin();
@@ -131,6 +133,8 @@ class Global
 
         //Funzioni
 };
+
+
 
 extern Global GVL;
 extern RemoteDebug Debug;
