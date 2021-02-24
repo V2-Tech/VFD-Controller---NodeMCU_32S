@@ -128,7 +128,7 @@ int16_t WK600::getActSetpoint()
             Serial.printf("\nErrore lettura setpoint: %u",Return);
             _CommMaster->clearResponseBuffer();
         #endif
-        return -1;
+        return 0;
     } 
 }
 
@@ -148,7 +148,7 @@ int16_t WK600::getActSpeed()
             Serial.printf("\nErrore lettura elocita attuale: %u",Return);
             _CommMaster->clearResponseBuffer();
         #endif
-        return -1;
+        return 0;
     } 
 }
 
@@ -168,7 +168,7 @@ int16_t WK600::getActVin()
             Serial.printf("\nErrore lettura tensione ingresso Vin: %u",Return);
             _CommMaster->clearResponseBuffer();
         #endif
-        return -1;
+        return 0;
     } 
 }
 
@@ -188,7 +188,7 @@ int16_t WK600::getActVout()
             Serial.printf("\nErrore lettura tensione uscita Vout: %u",Return);
             _CommMaster->clearResponseBuffer();
         #endif
-        return -1;
+        return 0;
     } 
 }
 
@@ -208,7 +208,7 @@ uint16_t WK600::getActOutCurrent()
             Serial.printf("\nErrore corrente tensione uscita Iout: %u",Return);
             _CommMaster->clearResponseBuffer();
         #endif
-        return -1;
+        return 0;
     } 
 }
 
@@ -228,7 +228,7 @@ uint16_t WK600::getActOutPower()
             Serial.printf("\nErrore potenza erogata Pout: %u",Return);
             _CommMaster->clearResponseBuffer();
         #endif
-        return -1;
+        return 0;
     } 
 }
 
@@ -248,7 +248,7 @@ int16_t WK600::getFaultCode()
             Serial.printf("\nErrore lettura codice errore: %u",Return);
             _CommMaster->clearResponseBuffer();
         #endif
-        return -1;
+        return 0;
     } 
 }
 

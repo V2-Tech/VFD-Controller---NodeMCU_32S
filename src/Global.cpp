@@ -52,6 +52,9 @@ void Global::begin()
     lcd.createChar(0, GVL.SymbolRightArrow);
     lcd.createChar(1, GVL.SymbolLeftArrow);
     lcd.createChar(2, GVL.SymbolSelected);
-    menu.MenuValueUpdate(0, vfd.getActSetpoint(), MenuValueType::NUMBER);
+    EncoderValue = (int32_t)vfd.getActSetpoint();
+    encoder.setCount(EncoderValue);
+    menu.MenuValueUpdate(0, EncoderValue, MenuValueType::NUMBER);
     menu.MenuValueUpdate(1, 0, MenuValueType::SYMBOL);
+     
 }

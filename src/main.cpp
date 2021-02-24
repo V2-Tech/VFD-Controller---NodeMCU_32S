@@ -124,7 +124,8 @@ void setup() {
   /////////////////////////////////////////////////////             
               /* GENERAL inizialization */
   /////////////////////////////////////////////////////
-  menu.begin(lcd, GVL.MenuEntitys, encoder, EncBtn, vfd);
+  delay(2000);
+  menu.begin(lcd,LCD_COL_NUM,LCD_ROW_NUM, GVL.MenuEntitys, encoder, EncBtn, vfd);
   vfd.begin(node);
   GVL.begin();
 }

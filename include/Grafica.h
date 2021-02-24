@@ -11,9 +11,6 @@
 #define ENC_DEBUG 
 #define LCD_DEBUG
 
-#define LCD_ROW_NUM 4
-#define LCD_COL_NUM 20
-
 typedef enum
 {
 	MENU_EDIT,
@@ -40,10 +37,10 @@ typedef struct {
 class Menu{
     public:
         Menu();
-        void begin(LiquidCrystal_I2C &lcd, std::vector<MenuEntityList> menuEntityList, ESP32Encoder &enc, Button &encBtn, WK600 &vfd);
+        void begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std::vector<MenuEntityList> menuEntityList, ESP32Encoder &enc, Button &encBtn, WK600 &vfd);
         void EncoderUpdate(uint16_t lowerLimit, uint16_t upperLimit);
         void MenuValueUpdate(uint8_t MenuEntityNum, uint32_t value, MenuValueType ValueType);
-        uint32_t EncoderValue;
+        uint32_t EncoderCounts;
     private:
         LiquidCrystal_I2C* _lcd;
         ESP32Encoder* _enc;
@@ -55,5 +52,7 @@ class Menu{
         uint64_t _tempEncoderCount;
         uint8_t _ActPage;
         uint8_t _ActRow;
+        uint8_t _lcdRowNum;
+        uint8_t _lcdColNum;
         MenuMode menuMode;
 };

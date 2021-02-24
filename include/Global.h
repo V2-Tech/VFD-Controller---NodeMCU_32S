@@ -118,7 +118,7 @@ class Global
         Global();
 
         //Variabili
-        int16_t EncoderValue;
+        int32_t EncoderValue;
         std::vector<MenuEntityList> MenuEntitys;
         Coord MenuEntityPos[];
         MotorParam motorParameter;
@@ -134,7 +134,6 @@ class Global
 
         //Funzioni
 };
-
 
 
 extern Global GVL;

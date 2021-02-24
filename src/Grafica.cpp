@@ -2,13 +2,13 @@
 
 Menu::Menu()
 {
-    EncoderValue = 0;
+    EncoderCounts = 0;
     _ActPage = 1;
     _ActRow = 1;
     _PageQuantity = 1;
 }
 
-void Menu::begin(LiquidCrystal_I2C &lcd, std::vector<MenuEntityList> menuEntityList, ESP32Encoder &enc, Button &encBtn, WK600 &vfd)
+void Menu::begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std::vector<MenuEntityList> menuEntityList, ESP32Encoder &enc, Button &encBtn, WK600 &vfd)
 {
     //Copio i riferimenti nelle variabili interne alla classe
     _lcd = &lcd;
@@ -16,6 +16,8 @@ void Menu::begin(LiquidCrystal_I2C &lcd, std::vector<MenuEntityList> menuEntityL
     _encBtn = &encBtn;
     _vfd = &vfd;
     _menuArray = menuEntityList;
+    _lcdRowNum = lcd_rows;
+    _lcdColNum = lcd_cols;
 
     //Inizializzo LCD ed ENCODER
     _encBtn->begin();
@@ -50,6 +52,9 @@ void Menu::begin(LiquidCrystal_I2C &lcd, std::vector<MenuEntityList> menuEntityL
     }
     _lcd->setCursor(0,0);
     _lcd->cursor_off();
+
+    //Carico valore iniziale dell encoder
+
 }
 
 void Menu::EncoderUpdate(uint16_t lowerLimit, uint16_t upperLimit)
@@ -60,28 +65,29 @@ void Menu::EncoderUpdate(uint16_t lowerLimit, uint16_t upperLimit)
         if (_enc->getCount()<=upperLimit)
         {
             _tempEncoderCount = _enc->getCount();
-            EncoderValue = (int32_t)_enc->getCount();
+            EncoderCounts = (int32_t)_enc->getCount();
         }
         else
         {
             _tempEncoderCount = upperLimit;
-            EncoderValue = (int32_t)upperLimit;
+            EncoderCounts = (int32_t)upperLimit;
             _enc->setCount(upperLimit);
         }
         if (_enc->getCount()>=lowerLimit)
         {
             _tempEncoderCount = _enc->getCount();
-            EncoderValue = (int32_t)_enc->getCount();
+            EncoderCounts = (int32_t)_enc->getCount();
         }
         else
         {
             _tempEncoderCount = lowerLimit;
-            EncoderValue = (int32_t)lowerLimit;
+            EncoderCounts = (int32_t)lowerLimit;
             _enc->setCount(lowerLimit);
         }
         #ifdef ENC_DEBUG
             Serial.println("\nEncoder count = "+String((int32_t)_enc->getCount()));
         #endif
+        Menu::MenuValueUpdate(0, EncoderCounts, MenuValueType::NUMBER);
     }
     if(_encBtn->wasPressed())
     {
@@ -89,7 +95,7 @@ void Menu::EncoderUpdate(uint16_t lowerLimit, uint16_t upperLimit)
             Serial.println("\nEncoder button pressed");
         #endif
         menuMode = MENU_EDIT;
-    }
+    }    
 }
 
 void Menu::MenuValueUpdate(uint8_t MenuEntityNum, uint32_t value, MenuValueType ValueType)
@@ -106,8 +112,16 @@ void Menu::MenuValueUpdate(uint8_t MenuEntityNum, uint32_t value, MenuValueType 
         #ifdef LCD_DEBUG
             Serial.printf("\nMenu value update leght check result: %u",tempStrLength);
         #endif
-        if (tempStrLength<=LCD_COL_NUM)
+        if (tempStrLength<=_lcdColNum)
         {
+            //Resetto l eventuale campo inutilizzato
+            int16_t tempVal = _lcdColNum - _menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length();
+            for(int8_t k = 0; k < tempVal; ++k)
+            {
+                _lcd->setCursor(_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + k, _menuArray[MenuEntityNum].position.y);
+                _lcd->printstr(" ");
+            }
+            //Scrivo il campo
             _lcd->setCursor(_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 1, _menuArray[MenuEntityNum].position.y);
             _lcd->print(value);
             #ifdef LCD_DEBUG
@@ -132,7 +146,7 @@ void Menu::MenuValueUpdate(uint8_t MenuEntityNum, uint32_t value, MenuValueType 
         #ifdef LCD_DEBUG
             Serial.printf("\nMenu value update leght check result: %u",tempStrLength);
         #endif
-        if (tempStrLength<=LCD_COL_NUM)
+        if (tempStrLength<=_lcdColNum)
         {
             _lcd->setCursor(_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 2, _menuArray[MenuEntityNum].position.y);
             _lcd->write(value);
