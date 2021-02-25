@@ -112,11 +112,11 @@ void WK600::reset()
     }    
 }
 
-int16_t WK600::getActSetpoint()
+int32_t WK600::getActSetpoint()
 {
     uint8_t Return = _CommMaster->readHoldingRegisters(MONITOR_SETSPEED_ADDR,1);
     if (Return==_CommMaster->ku8MBSuccess){
-        int16_t tempVal = _CommMaster->getResponseBuffer(0)/100;
+        int32_t tempVal = _CommMaster->getResponseBuffer(0)/100;
         #ifdef COMM_DEBUG
             Serial.printf("\nLettura setpoint avvenuta: %u", tempVal);
         #endif
@@ -132,11 +132,11 @@ int16_t WK600::getActSetpoint()
     } 
 }
 
-int16_t WK600::getActSpeed()
+int32_t WK600::getActSpeed()
 {
     uint8_t Return = _CommMaster->readHoldingRegisters(MONITOR_ACTSPEED_ADDR,1);
     if (Return==_CommMaster->ku8MBSuccess){
-        int16_t tempVal = _CommMaster->getResponseBuffer(0)/100;
+        int32_t tempVal = _CommMaster->getResponseBuffer(0)/100;
         #ifdef COMM_DEBUG
             Serial.printf("\nLettura velocita attuale avvenuta: %u", tempVal);
         #endif
@@ -152,11 +152,11 @@ int16_t WK600::getActSpeed()
     } 
 }
 
-int16_t WK600::getActVin()
+int32_t WK600::getActVin()
 {
     uint8_t Return = _CommMaster->readHoldingRegisters(MONITOR_INVOLTAGE_ADDR,1);
     if (Return==_CommMaster->ku8MBSuccess){
-        int16_t tempVal = _CommMaster->getResponseBuffer(0)/10;
+        int32_t tempVal = _CommMaster->getResponseBuffer(0)/10;
         #ifdef COMM_DEBUG
             Serial.printf("\nLettura tensione di alimentazione avvenuta: %u", tempVal);
         #endif
@@ -172,11 +172,11 @@ int16_t WK600::getActVin()
     } 
 }
 
-int16_t WK600::getActVout()
+int32_t WK600::getActVout()
 {
     uint8_t Return = _CommMaster->readHoldingRegisters(MONITOR_OUTVOLTAGE_ADDR,1);
     if (Return==_CommMaster->ku8MBSuccess){
-        int16_t tempVal = _CommMaster->getResponseBuffer(0);
+        int32_t tempVal = _CommMaster->getResponseBuffer(0);
         #ifdef COMM_DEBUG
             Serial.printf("\nLettura tensione di uscita avvenuta: %u", tempVal);
         #endif
@@ -232,11 +232,11 @@ uint16_t WK600::getActOutPower()
     } 
 }
 
-int16_t WK600::getFaultCode()
+int32_t WK600::getFaultCode()
 {
     uint8_t Return = _CommMaster->readHoldingRegisters(MONITOR_FAULTCODE_ADDR,1);
     if (Return==_CommMaster->ku8MBSuccess){
-        int16_t tempVal = _CommMaster->getResponseBuffer(0);
+        int32_t tempVal = _CommMaster->getResponseBuffer(0);
         #ifdef COMM_DEBUG
             Serial.printf("\nLettura codice errore avvenuta: %u", tempVal);
         #endif
@@ -257,7 +257,7 @@ VFDStatus WK600::getStatus()
     VFDStatus tempStatus;
     uint8_t Return = _CommMaster->readHoldingRegisters(STATUS_ADDR,1);
     if (Return==_CommMaster->ku8MBSuccess){
-        int16_t tempVal = _CommMaster->getResponseBuffer(0);
+        int32_t tempVal = _CommMaster->getResponseBuffer(0);
         #ifdef COMM_DEBUG
             Serial.printf("\nLettura stato drive avvenuta: %u", tempVal);
         #endif
@@ -283,34 +283,46 @@ VFDStatus WK600::getStatus()
     else{
         #ifdef COMM_DEBUG
             Serial.printf("\nErrore lettura stato drive: %u",Return);
-            _CommMaster->clearResponseBuffer();
         #endif
+        _CommMaster->clearResponseBuffer();
         return VFDStatus::STATUS_ERROR;
     } 
 }
 
-int16_t WK600::PercentToRPM(int16_t speedPercent, MotorParam motorParameter)
+int32_t WK600::PercentToRPM(int32_t speedPercent, MotorParam motorParameter)
 {
     float y, m;
-    int16_t tempPercent = abs(speedPercent);
-    m = motorParameter.RPMmax/100;
-    y = m*tempPercent;
-    return y;
+    int32_t tempPercent = abs(speedPercent);
+    #ifdef CONVERSION_DEBUG
+        Serial.printf("\nConversione %->RPM. Valore assoluto: %d",tempPercent);
+    #endif
+    #ifdef CONVERSION_DEBUG
+        Serial.printf("\nConversione %->RPM. Parametro motore RPM: %u", motorParameter.RPMmax);
+    #endif
+    m = (float)motorParameter.RPMmax/100;
+    #ifdef CONVERSION_DEBUG
+        Serial.printf("\nConversione %->RPM. Coefficiente: %f",m);
+    #endif
+    y = (float)m*tempPercent;
+    #ifdef CONVERSION_DEBUG
+        Serial.printf("\nConversione %->RPM. Risultato: %f",y);
+    #endif
+    return (int32_t)y;
 }
 
-int16_t  WK600::HZToPercent(int16_t vfdHz, MotorParam motorParameter)
+int32_t  WK600::HZToPercent(int32_t vfdHz, MotorParam motorParameter)
 {
     float y, m;
-    int16_t tempHz = abs(vfdHz);
+    int32_t tempHz = abs(vfdHz);
     m = 100/motorParameter.Freq;
     y = m*tempHz;
     return y;
 }
 
-int16_t  WK600::HZToRPM(int16_t vfdHz, MotorParam motorParameter)
+int32_t  WK600::HZToRPM(int32_t vfdHz, MotorParam motorParameter)
 {
     float y, m;
-    int16_t tempHz = abs(vfdHz);
+    int32_t tempHz = abs(vfdHz);
     m = motorParameter.RPMmax/motorParameter.Freq;
     y = m*tempHz;
     return y;

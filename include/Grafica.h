@@ -38,7 +38,7 @@ class Menu{
     public:
         Menu();
         void begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std::vector<MenuEntityList> menuEntityList, ESP32Encoder &enc, 
-        uint32_t enc_lower_limit, uint32_t enc_upper_limit, Button &encBtn, WK600 &vfd);
+        uint32_t enc_lower_limit, uint32_t enc_upper_limit, Button &encBtn, WK600 &vfd, MotorParam motorParameters);
         void EncoderUpdate();
         void DisplayedValueUpdate(uint8_t MenuEntityNum, int32_t value, MenuValueType ValueType);
         void SelectionUpdate(uint8_t PreviousSelection);
@@ -61,5 +61,7 @@ class Menu{
         uint32_t _enc_lower;
         uint32_t _enc_upper;
         MenuMode menuMode;
+        MotorParam _motorParameters;
         void LoadSelectionValue();
+        std::string ToString(int n);
 };

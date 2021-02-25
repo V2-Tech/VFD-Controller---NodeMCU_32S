@@ -124,9 +124,9 @@ void setup() {
   /////////////////////////////////////////////////////             
               /* GENERAL inizialization */
   /////////////////////////////////////////////////////
-  vfd.begin(node);
-  menu.begin(lcd,LCD_COL_NUM,LCD_ROW_NUM, GVL.MenuEntitys, encoder, 0, 100, EncBtn, vfd);
   GVL.begin();
+  vfd.begin(node);
+  menu.begin(lcd,LCD_COL_NUM,LCD_ROW_NUM, GVL.MenuEntitys, encoder, 0, 100, EncBtn, vfd, GVL.motorParameter);
   lcd.createChar(0, SymbolRightArrow);
   lcd.createChar(1, SymbolLeftArrow);
   lcd.createChar(2, SymbolSelected);

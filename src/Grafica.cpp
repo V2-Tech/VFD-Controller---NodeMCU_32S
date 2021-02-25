@@ -11,7 +11,7 @@ Menu::Menu()
 }
 
 void Menu::begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std::vector<MenuEntityList> menuEntityList, ESP32Encoder &enc, 
-        uint32_t enc_lower_limit, uint32_t enc_upper_limit, Button &encBtn, WK600 &vfd)
+        uint32_t enc_lower_limit, uint32_t enc_upper_limit, Button &encBtn, WK600 &vfd, MotorParam motorParameters)
 {
     //Copio i riferimenti nelle variabili interne alla classe
     _lcd = &lcd;
@@ -23,6 +23,7 @@ void Menu::begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std:
     _lcdColNum = lcd_cols;
     _enc_lower = enc_lower_limit;
     _enc_upper = enc_upper_limit;
+    _motorParameters = motorParameters;
 
     //Inizializzo LCD ed ENCODER
     _encBtn->begin();
@@ -64,6 +65,10 @@ void Menu::begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std:
     _menuValues.push_back((int32_t)_vfd->getActSetpoint());
     _menuValues.push_back(0);
 
+    //Inizializzo il valore del encoder
+    _enc->setCount(_menuValues[0]);
+    
+    //Scrivo i primi valori del menu
     Menu::DisplayedValueUpdate(0, _menuValues[0], MenuValueType::NUMBER);
     Menu::DisplayedValueUpdate(1, _menuValues[1], MenuValueType::SYMBOL);
 }
@@ -126,13 +131,15 @@ void Menu::DisplayedValueUpdate(uint8_t MenuEntityNum, int32_t value, MenuValueT
 {
     if (ValueType==MenuValueType::NUMBER)
     {
-        std::ostringstream ostr;
-        ostr << _menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() +  1;
-        std::string tempStr = ostr.str();
-        int16_t tempStrLength = tempStr.length();
-        ostr << value;
-        tempStr = ostr.str();
-        tempStrLength = tempStrLength + tempStr.length();
+        String tempStr = _menuArray[MenuEntityNum].name;
+        std::string str = ToString(value);
+        int16_t tempStrLength = tempStr.length() + str.length();
+        #ifdef LCD_DEBUG
+            Serial.printf("\nMenu NUMBER value update. Menu string length: %u",tempStr.length());
+            Serial.printf("\nMenu NUMBER value update. Menu value: %s",str.c_str());
+            Serial.printf("\nMenu NUMBER value update. Menu value string length: %u", str.length());
+        #endif
+        tempStrLength += _menuArray[MenuEntityNum].position.x + 1;
         #ifdef LCD_DEBUG
             Serial.printf("\nMenu NUMBER value update length check result: %u",tempStrLength);
         #endif
@@ -141,8 +148,14 @@ void Menu::DisplayedValueUpdate(uint8_t MenuEntityNum, int32_t value, MenuValueT
             //Scrivo il campo
             _lcd->setCursor(_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 1, _menuArray[MenuEntityNum].position.y);
             _lcd->print(value);
-            _lcd->setCursor(_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + tempStr.length() - 1, _menuArray[MenuEntityNum].position.y);
-            _lcd->printstr("  ");
+            for (int16_t k=0; k<=_lcdColNum-tempStrLength; k++)
+            {
+                _lcd->setCursor(tempStrLength, _menuArray[MenuEntityNum].position.y);
+                _lcd->printstr(" ");
+                #ifdef LCD_DEBUG
+                    Serial.printf("\nReset field coord X: %u",tempStrLength);
+                #endif
+            }
             #ifdef LCD_DEBUG
                 Serial.printf("\nCoord X: %u",_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 1);
                 Serial.printf("\nCoord Y: %u",_menuArray[MenuEntityNum].position.y);
@@ -218,7 +231,8 @@ void Menu::SelectionValueUpdate()
             EncoderCounts[MENU_EDIT] = (int32_t)_enc_lower;
             _enc->setCount(_enc_lower);
         }
-        Menu::DisplayedValueUpdate(EncoderCounts[MENU_SCROL], EncoderCounts[MENU_EDIT], MenuValueType::NUMBER);
+        int32_t tempVal = _vfd->PercentToRPM(EncoderCounts[MENU_EDIT], _motorParameters);
+        Menu::DisplayedValueUpdate(EncoderCounts[MENU_SCROL], tempVal, MenuValueType::NUMBER);
     }
     else
     {
@@ -242,4 +256,11 @@ void Menu::LoadSelectionValue()
     EncoderCounts[MENU_EDIT] = _menuValues[EncoderCounts[MENU_SCROL]];
     _tempEncoderCount[MENU_EDIT] = EncoderCounts[MENU_EDIT];
     _enc->setCount(EncoderCounts[MENU_EDIT]);
+}
+
+std::string  Menu::ToString(int n)
+{
+    std::ostringstream stm;
+    stm << n;
+    return stm.str();
 }

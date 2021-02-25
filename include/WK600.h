@@ -4,6 +4,7 @@
 #include <ModbusMaster.h>
 
 #define COMM_DEBUG
+#define CONVERSION_DEBUG
 
 //INDIRIZZI MODBUS WK600
 #define SETPOINT_ADDR 0x1000 //%*100
@@ -57,17 +58,17 @@ class WK600
         void stop();
         void free_stop();
         void reset();
-        int16_t getActSetpoint();
-        int16_t getActSpeed();
-        int16_t getActVin();
-        int16_t getActVout();
+        int32_t getActSetpoint();
+        int32_t getActSpeed();
+        int32_t getActVin();
+        int32_t getActVout();
         uint16_t getActOutCurrent();
         uint16_t getActOutPower();
-        int16_t getFaultCode();
+        int32_t getFaultCode();
         VFDStatus getStatus();
-        int16_t PercentToRPM(int16_t speedPercent, MotorParam motorParameter);
-        int16_t HZToPercent(int16_t vfdHz, MotorParam motorParameter);
-        int16_t HZToRPM(int16_t vfdHz, MotorParam motorParameter);
+        int32_t PercentToRPM(int32_t speedPercent, MotorParam motorParameter);
+        int32_t HZToPercent(int32_t vfdHz, MotorParam motorParameter);
+        int32_t HZToRPM(int32_t vfdHz, MotorParam motorParameter);
     private:
         ModbusMaster* _CommMaster;
 };
