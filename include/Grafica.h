@@ -9,7 +9,7 @@
 #include <sstream>
 
 #define ENC_DEBUG 
-#define LCD_DEBUG
+//#define LCD_DEBUG
 
 typedef enum
 {
@@ -20,7 +20,8 @@ typedef enum
 typedef enum
 {
 	NUMBER,
-    SYMBOL
+    SYMBOL,
+    STRING
 } MenuValueType;
 
 typedef struct {
@@ -40,17 +41,19 @@ class Menu{
         void begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std::vector<MenuEntityList> menuEntityList, ESP32Encoder &enc, 
         uint32_t enc_lower_limit, uint32_t enc_upper_limit, Button &encBtn, WK600 &vfd, MotorParam motorParameters);
         void EncoderUpdate();
+        void GraphicValueUpdate();
         void DisplayedValueUpdate(uint8_t MenuEntityNum, int32_t value, MenuValueType ValueType);
+        void DisplayedStringUpdate(uint8_t MenuEntityNum, String string);
         void SelectionUpdate(uint8_t PreviousSelection);
         void SelectionValueUpdate();
         uint32_t EncoderCounts[2];
+        std::vector<uint32_t> MenuValues; /*0=Valore encoder, 1=Direzione*/
     private:
         LiquidCrystal_I2C* _lcd;
         ESP32Encoder* _enc;
         Button* _encBtn;
         WK600* _vfd;
         std::vector<MenuEntityList> _menuArray;
-        std::vector<uint32_t> _menuValues;
         uint8_t _PageQuantity;
         uint8_t _MenuEntityQuantity;
         uint64_t _tempEncoderCount[2];

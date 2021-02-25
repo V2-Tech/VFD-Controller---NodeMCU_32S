@@ -62,15 +62,15 @@ void Menu::begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std:
     _lcd->cursor_off();
 
     //Genero il vettore dei valori associati alle voci MENU SCROL modificabili tramite rotazione encoder
-    _menuValues.push_back((int32_t)_vfd->getActSetpoint());
-    _menuValues.push_back(0);
+    MenuValues.push_back((int32_t)_vfd->getActSetpoint());
+    MenuValues.push_back(0);
 
     //Inizializzo il valore del encoder
-    _enc->setCount(_menuValues[0]);
+    _enc->setCount(MenuValues[0]);
     
     //Scrivo i primi valori del menu
-    Menu::DisplayedValueUpdate(0, _menuValues[0], MenuValueType::NUMBER);
-    Menu::DisplayedValueUpdate(1, _menuValues[1], MenuValueType::SYMBOL);
+    Menu::DisplayedValueUpdate(0, MenuValues[0], MenuValueType::NUMBER);
+    Menu::DisplayedValueUpdate(1, MenuValues[1], MenuValueType::SYMBOL);
 }
 
 void Menu::EncoderUpdate()
@@ -131,6 +131,7 @@ void Menu::DisplayedValueUpdate(uint8_t MenuEntityNum, int32_t value, MenuValueT
 {
     if (ValueType==MenuValueType::NUMBER)
     {
+        int16_t tempMinFieldResetPos = _lcdColNum - 1;
         String tempStr = _menuArray[MenuEntityNum].name;
         std::string str = ToString(value);
         int16_t tempStrLength = tempStr.length() + str.length();
@@ -148,12 +149,30 @@ void Menu::DisplayedValueUpdate(uint8_t MenuEntityNum, int32_t value, MenuValueT
             //Scrivo il campo
             _lcd->setCursor(_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 1, _menuArray[MenuEntityNum].position.y);
             _lcd->print(value);
-            for (int16_t k=0; k<=_lcdColNum-tempStrLength; k++)
+            /*Resetto l eventuale carattere non sovrascritto*/
+            //Controllo se ho altre MenuEntity sulla stessa riga
+            for (int16_t k=0; k<_MenuEntityQuantity; k++)
             {
-                _lcd->setCursor(tempStrLength, _menuArray[MenuEntityNum].position.y);
+                if (_menuArray[MenuEntityNum].position.y==_menuArray[k].position.y)
+                {
+                    #ifdef LCD_DEBUG
+                        Serial.printf("\nFound menu entity on same row: %s",_menuArray[k].name.c_str());
+                    #endif
+                    if (_menuArray[MenuEntityNum].position.x<tempMinFieldResetPos && _menuArray[k].position.x>_menuArray[MenuEntityNum].position.x)
+                    {
+                        tempMinFieldResetPos = _menuArray[k].position.x - 1;
+                    }
+                }
+            }
+            #ifdef LCD_DEBUG
+                Serial.printf("\nReset field coord X min: %u",tempMinFieldResetPos);
+            #endif
+            for (int16_t k=0; k<=tempMinFieldResetPos-tempStrLength; k++)
+            {
+                _lcd->setCursor(tempStrLength + k, _menuArray[MenuEntityNum].position.y);
                 _lcd->printstr(" ");
                 #ifdef LCD_DEBUG
-                    Serial.printf("\nReset field coord X: %u",tempStrLength);
+                    Serial.printf("\nReset field coord X: %u",tempStrLength + k);
                 #endif
             }
             #ifdef LCD_DEBUG
@@ -193,7 +212,66 @@ void Menu::DisplayedValueUpdate(uint8_t MenuEntityNum, int32_t value, MenuValueT
             #ifdef LCD_DEBUG
                 Serial.printf("\nMenu value update leght check failed. Total length is: %u",tempStrLength);
             #endif
-        }     
+        }
+    }
+}
+
+void Menu::DisplayedStringUpdate(uint8_t MenuEntityNum, String string)
+{
+    int16_t tempMinFieldResetPos = _lcdColNum - 1;
+    String tempStr = _menuArray[MenuEntityNum].name;
+    int16_t tempStrLength = tempStr.length() + string.length();
+    #ifdef LCD_DEBUG
+        Serial.printf("\nMenu NUMBER string update. Menu string length: %u",tempStr.length());
+        Serial.printf("\nMenu NUMBER string update. Menu value: %s",str.c_str());
+        Serial.printf("\nMenu NUMBER string update. Menu value string length: %u", str.length());
+    #endif
+    tempStrLength += _menuArray[MenuEntityNum].position.x + 1;
+    #ifdef LCD_DEBUG
+        Serial.printf("\nMenu NUMBER string update length check result: %u",tempStrLength);
+    #endif
+    if (tempStrLength<=_lcdColNum)
+    {
+        //Scrivo il campo
+        _lcd->setCursor(_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 1, _menuArray[MenuEntityNum].position.y);
+        _lcd->printstr(string.c_str());
+        /*Resetto l eventuale carattere non sovrascritto*/
+        //Controllo se ho altre MenuEntity sulla stessa riga
+        for (int16_t k=0; k<_MenuEntityQuantity; k++)
+        {
+            if (_menuArray[MenuEntityNum].position.y==_menuArray[k].position.y)
+            {
+                #ifdef LCD_DEBUG
+                    Serial.printf("\nFound menu entity on same row: %s",_menuArray[k].name.c_str());
+                #endif
+                if (_menuArray[MenuEntityNum].position.x<tempMinFieldResetPos && _menuArray[k].position.x>_menuArray[MenuEntityNum].position.x)
+                {
+                    tempMinFieldResetPos = _menuArray[k].position.x - 1;
+                }
+            }
+        }
+        #ifdef LCD_DEBUG
+            Serial.printf("\nReset field coord X min: %u",tempMinFieldResetPos);
+        #endif
+        for (int16_t k=0; k<=tempMinFieldResetPos-tempStrLength; k++)
+        {
+            _lcd->setCursor(tempStrLength + k, _menuArray[MenuEntityNum].position.y);
+            _lcd->printstr(" ");
+            #ifdef LCD_DEBUG
+                Serial.printf("\nReset field coord X: %u",tempStrLength + k);
+            #endif
+        }
+        #ifdef LCD_DEBUG
+            Serial.printf("\nCoord X: %u",_menuArray[MenuEntityNum].position.x + _menuArray[MenuEntityNum].name.length() + 1);
+            Serial.printf("\nCoord Y: %u",_menuArray[MenuEntityNum].position.y);
+            Serial.printf("\nValue: %s", string);  
+        #endif
+    }
+    else
+    {
+        #ifdef LCD_DEBUG
+            Serial.printf("\nMenu value update leght check failed. Total length is: %u",tempStrLength);
+        #endif
     }
 }
 
@@ -248,14 +326,42 @@ void Menu::SelectionValueUpdate()
         EncoderCounts[MENU_EDIT] = (int32_t)_enc->getCount();
         Menu::DisplayedValueUpdate(EncoderCounts[MENU_SCROL], EncoderCounts[MENU_EDIT], MenuValueType::SYMBOL);
     }
-    _menuValues[EncoderCounts[MENU_SCROL]] = EncoderCounts[MENU_EDIT];
+    MenuValues[EncoderCounts[MENU_SCROL]] = EncoderCounts[MENU_EDIT];
 }
 
 void Menu::LoadSelectionValue()
 {
-    EncoderCounts[MENU_EDIT] = _menuValues[EncoderCounts[MENU_SCROL]];
+    EncoderCounts[MENU_EDIT] = MenuValues[EncoderCounts[MENU_SCROL]];
     _tempEncoderCount[MENU_EDIT] = EncoderCounts[MENU_EDIT];
     _enc->setCount(EncoderCounts[MENU_EDIT]);
+}
+
+void Menu::GraphicValueUpdate()
+{
+    int32_t tempVal = _vfd->getActSpeed();
+    tempVal = _vfd->PercentToRPM(tempVal, _motorParameters);
+    Menu::DisplayedValueUpdate(2,tempVal,MenuValueType::NUMBER);
+
+    tempVal = _vfd->getActOutPower();
+    Menu::DisplayedValueUpdate(3,tempVal,MenuValueType::NUMBER);
+
+    VFDStatus tempStatus = _vfd->getStatus();
+    if (tempStatus==VFDStatus::STATUS_RUN_FORW)
+    {
+        Menu::DisplayedStringUpdate(4, "RF");
+    }
+    else if (tempStatus==VFDStatus::STATUS_RUN_REV)
+    {
+        Menu::DisplayedStringUpdate(4, "RR");
+    }
+    else if (tempStatus==VFDStatus::STATUS_STOP)
+    {
+        Menu::DisplayedStringUpdate(4, "ST");
+    }
+    else
+    {
+        Menu::DisplayedStringUpdate(4, "???");
+    }
 }
 
 std::string  Menu::ToString(int n)

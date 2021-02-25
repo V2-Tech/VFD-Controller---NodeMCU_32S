@@ -144,5 +144,7 @@ extern LiquidCrystal_I2C lcd;
 extern Menu menu;
 extern Button EncBtn;
 extern WK600 vfd;
-
+extern Button StartMotoreBtn;
+extern Button StopMotoreBtn;
+extern Button VDFErrorBtn;
 #endif

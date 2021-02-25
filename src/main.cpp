@@ -120,7 +120,14 @@ void setup() {
   ESP32Encoder::useInternalWeakPullResistors=UP;
 	encoder.attachHalfQuad(InEncoderDT, InEncoderCLK);
 	encoder.setCount(1);
-  
+
+  /////////////////////////////////////////////////////             
+              /* BUTTON inizialization */
+  /////////////////////////////////////////////////////
+  StartMotoreBtn.begin();
+  StopMotoreBtn.begin();
+  VDFErrorBtn.begin();
+
   /////////////////////////////////////////////////////             
               /* GENERAL inizialization */
   /////////////////////////////////////////////////////
@@ -130,13 +137,16 @@ void setup() {
   lcd.createChar(0, SymbolRightArrow);
   lcd.createChar(1, SymbolLeftArrow);
   lcd.createChar(2, SymbolSelected);
+  timerReadVdf.start();
 }
 
 void loop() {
   while(1){
     ArduinoOTA.handle();
     menu.EncoderUpdate();
-    
+    BtnUpdate();
+
+    timerReadVdf.update();
     /*
     uint8_t Return = node.readHoldingRegisters(0x1000,9);
       if (Return==node.ku8MBSuccess){

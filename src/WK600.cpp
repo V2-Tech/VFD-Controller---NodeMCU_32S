@@ -310,6 +310,27 @@ int32_t WK600::PercentToRPM(int32_t speedPercent, MotorParam motorParameter)
     return (int32_t)y;
 }
 
+int32_t WK600::RPMToPercent(int32_t speedRPM, MotorParam motorParameter)
+{
+    float y, m;
+    int32_t tempRPM = abs(speedRPM);
+    #ifdef CONVERSION_DEBUG
+        Serial.printf("\nConversione RPM->%. Valore assoluto: %d",tempRPM);
+    #endif
+    #ifdef CONVERSION_DEBUG
+        Serial.printf("\nConversione RPM->%. Parametro motore RPM: %u", motorParameter.RPMmax);
+    #endif
+    m = (float)speedRPM/(float)motorParameter.RPMmax;
+    #ifdef CONVERSION_DEBUG
+        Serial.printf("\nConversione RPM->%. Coefficiente: %f",m);
+    #endif
+    y = (float)m*100;
+    #ifdef CONVERSION_DEBUG
+        Serial.printf("\nConversione RPM->%. Risultato: %f",y);
+    #endif
+    return (int32_t)y;
+}
+
 int32_t  WK600::HZToPercent(int32_t vfdHz, MotorParam motorParameter)
 {
     float y, m;

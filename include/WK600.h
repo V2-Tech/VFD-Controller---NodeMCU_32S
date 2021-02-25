@@ -3,8 +3,8 @@
 #include <HardwareSerial.h>
 #include <ModbusMaster.h>
 
-#define COMM_DEBUG
-#define CONVERSION_DEBUG
+//#define COMM_DEBUG
+//#define CONVERSION_DEBUG
 
 //INDIRIZZI MODBUS WK600
 #define SETPOINT_ADDR 0x1000 //%*100
@@ -67,6 +67,7 @@ class WK600
         int32_t getFaultCode();
         VFDStatus getStatus();
         int32_t PercentToRPM(int32_t speedPercent, MotorParam motorParameter);
+        int32_t RPMToPercent(int32_t speedRPM, MotorParam motorParameter);
         int32_t HZToPercent(int32_t vfdHz, MotorParam motorParameter);
         int32_t HZToRPM(int32_t vfdHz, MotorParam motorParameter);
     private:
