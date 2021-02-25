@@ -124,16 +124,18 @@ void setup() {
   /////////////////////////////////////////////////////             
               /* GENERAL inizialization */
   /////////////////////////////////////////////////////
-  delay(2000);
-  menu.begin(lcd,LCD_COL_NUM,LCD_ROW_NUM, GVL.MenuEntitys, encoder, EncBtn, vfd);
   vfd.begin(node);
+  menu.begin(lcd,LCD_COL_NUM,LCD_ROW_NUM, GVL.MenuEntitys, encoder, 0, 100, EncBtn, vfd);
   GVL.begin();
+  lcd.createChar(0, SymbolRightArrow);
+  lcd.createChar(1, SymbolLeftArrow);
+  lcd.createChar(2, SymbolSelected);
 }
 
 void loop() {
   while(1){
     ArduinoOTA.handle();
-    menu.EncoderUpdate(0, 100);
+    menu.EncoderUpdate();
     
     /*
     uint8_t Return = node.readHoldingRegisters(0x1000,9);

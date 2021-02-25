@@ -37,22 +37,29 @@ typedef struct {
 class Menu{
     public:
         Menu();
-        void begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std::vector<MenuEntityList> menuEntityList, ESP32Encoder &enc, Button &encBtn, WK600 &vfd);
-        void EncoderUpdate(uint16_t lowerLimit, uint16_t upperLimit);
-        void MenuValueUpdate(uint8_t MenuEntityNum, uint32_t value, MenuValueType ValueType);
-        uint32_t EncoderCounts;
+        void begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std::vector<MenuEntityList> menuEntityList, ESP32Encoder &enc, 
+        uint32_t enc_lower_limit, uint32_t enc_upper_limit, Button &encBtn, WK600 &vfd);
+        void EncoderUpdate();
+        void DisplayedValueUpdate(uint8_t MenuEntityNum, int32_t value, MenuValueType ValueType);
+        void SelectionUpdate(uint8_t PreviousSelection);
+        void SelectionValueUpdate();
+        uint32_t EncoderCounts[2];
     private:
         LiquidCrystal_I2C* _lcd;
         ESP32Encoder* _enc;
         Button* _encBtn;
         WK600* _vfd;
         std::vector<MenuEntityList> _menuArray;
+        std::vector<uint32_t> _menuValues;
         uint8_t _PageQuantity;
         uint8_t _MenuEntityQuantity;
-        uint64_t _tempEncoderCount;
+        uint64_t _tempEncoderCount[2];
         uint8_t _ActPage;
         uint8_t _ActRow;
         uint8_t _lcdRowNum;
         uint8_t _lcdColNum;
+        uint32_t _enc_lower;
+        uint32_t _enc_upper;
         MenuMode menuMode;
+        void LoadSelectionValue();
 };
