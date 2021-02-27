@@ -14,7 +14,7 @@ void setup() {
   Serial.println("__ OK __");
   
   //Serial 2
-  Serial2.begin(115200, SERIAL_8N1, Serial2RX2, Serial2TX2);
+  Serial2.begin(38400, SERIAL_8N1, Serial2RX2, Serial2TX2);
   while (!Serial2) {}
   Serial.println("__ OK2 __");
   

@@ -64,6 +64,9 @@ void BtnUpdate()
         {
                 vfd.setSpeed(menu.MenuValues[0]);
                 Serial.printf("\nSetted speed percentas: %u",menu.MenuValues[0]);
+        }
+        if (StartMotoreBtn.wasReleased())
+        {
                 uint32_t tempDir = menu.MenuValues[1];
                 if (tempDir==0)
                 {
