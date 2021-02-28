@@ -10,6 +10,17 @@ void WK600::begin(ModbusMaster &CommMaster)
     _CommMaster = &CommMaster;
 }
 
+void WK600::ConnectionCheck()
+{
+    uint8_t Return = _CommMaster->readHoldingRegisters(MONITOR_ACTSPEED_ADDR,1);
+    if (Return==_CommMaster->ku8MBSuccess){
+        _ConnectionOK = true;
+    }
+    else{
+        _ConnectionOK = false;
+    } 
+}
+
 void WK600::setSpeed(uint16_t speed /*%*/)
 {
     uint8_t Return = _CommMaster->writeSingleRegister(SETPOINT_ADDR, speed*100);
@@ -141,7 +152,7 @@ int32_t WK600::getActSpeed()
             Serial.printf("\nLettura velocita attuale avvenuta: %u", tempVal);
         #endif
         _CommMaster->clearResponseBuffer();
-        return tempVal;
+        return abs(tempVal);
     }
     else{
         #ifdef COMM_DEBUG

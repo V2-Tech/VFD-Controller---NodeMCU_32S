@@ -4,7 +4,7 @@
 #include <ModbusMaster.h>
 
 //#define COMM_DEBUG
-//#define CONVERSION_DEBUG
+#define CONVERSION_DEBUG
 
 //INDIRIZZI MODBUS WK600
 #define SETPOINT_ADDR 0x1000 //%*100
@@ -52,6 +52,7 @@ class WK600
     public:
         WK600();
         void begin(ModbusMaster &CommMaster);
+        void ConnectionCheck();
         void setSpeed(uint16_t speed /*%*/);
         void run_forw();
         void run_rev();
@@ -70,6 +71,7 @@ class WK600
         int32_t RPMToPercent(int32_t speedRPM, MotorParam motorParameter);
         int32_t HZToPercent(int32_t vfdHz, MotorParam motorParameter);
         int32_t HZToRPM(int32_t vfdHz, MotorParam motorParameter);
+        bool _ConnectionOK;
     private:
         ModbusMaster* _CommMaster;
 };

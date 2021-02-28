@@ -143,9 +143,12 @@ void setup() {
 void loop() {
   while(1){
     ArduinoOTA.handle();
+    if (!vfd._ConnectionOK)
+    {
+      vfd.ConnectionCheck();
+    }
     menu.EncoderUpdate();
     BtnUpdate();
-
     timerReadVdf.update();
     /*
     uint8_t Return = node.readHoldingRegisters(0x1000,9);

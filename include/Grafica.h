@@ -67,4 +67,6 @@ class Menu{
         MotorParam _motorParameters;
         void LoadSelectionValue();
         std::string ToString(int n);
+        void FirstRead();
+        bool _xFirstGraphicDraw;
 };

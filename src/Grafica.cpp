@@ -67,64 +67,74 @@ void Menu::begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std:
 
     //Inizializzo il valore del encoder
     _enc->setCount(MenuValues[0]);
-    
-    //Scrivo i primi valori del menu
-    Menu::DisplayedValueUpdate(0, MenuValues[0], MenuValueType::NUMBER);
-    Menu::DisplayedValueUpdate(1, MenuValues[1], MenuValueType::SYMBOL);
 }
 
 void Menu::EncoderUpdate()
 {
-    _encBtn->read();
-    if((_tempEncoderCount[MENU_EDIT] != _enc->getCount()) && (menuMode == MENU_EDIT) || (_tempEncoderCount[MENU_SCROL] != _enc->getCount()) && (menuMode == MENU_SCROL))
-    {
-        if (menuMode == MENU_SCROL)
-        {
-            if (_enc->getCount()>1)
-            {
-                _enc->setCount(0);
-            }
-            if (_enc->getCount()<0)
-            {
-                _enc->setCount(1);
-            }
-            EncoderCounts[MENU_SCROL] = _enc->getCount();
-            Menu::SelectionUpdate(_tempEncoderCount[MENU_SCROL]);
-            _tempEncoderCount[MENU_SCROL] = EncoderCounts[MENU_SCROL];
-            #ifdef LCD_DEBUG
-                Serial.print("\nEncoder SCROL count = "+String((int32_t)_enc->getCount()));
-                Serial.printf("\ntempEncoder SCROL count = %u",_tempEncoderCount[MENU_SCROL]);
-            #endif
-        }
-        else
-        {
-            Menu::SelectionValueUpdate();
-            #ifdef ENC_DEBUG
-                Serial.print("\nEncoder EDIT count = "+String((int32_t)_enc->getCount()));
-                Serial.printf("\ntempEncoder EDIT count = %u",_tempEncoderCount[MENU_EDIT]);
-            #endif
-        }
-        
+    if (_vfd->_ConnectionOK && !_xFirstGraphicDraw){
+        _xFirstGraphicDraw = true;
+        FirstRead();
     }
-    if(_encBtn->wasPressed())
+    if (_vfd->_ConnectionOK && _xFirstGraphicDraw)
     {
-        if (menuMode == MENU_SCROL)
+        _encBtn->read();
+        if((_tempEncoderCount[MENU_EDIT] != _enc->getCount()) && (menuMode == MENU_EDIT) || (_tempEncoderCount[MENU_SCROL] != _enc->getCount()) && (menuMode == MENU_SCROL))
         {
-            menuMode = MENU_EDIT;
-            Menu::LoadSelectionValue();
-            #ifdef LCD_DEBUG
-                Serial.print("\nMenu in modalita EDIT");
-            #endif
+            if (menuMode == MENU_SCROL)
+            {
+                if (_enc->getCount()>1)
+                {
+                    _enc->setCount(0);
+                }
+                if (_enc->getCount()<0)
+                {
+                    _enc->setCount(1);
+                }
+                EncoderCounts[MENU_SCROL] = _enc->getCount();
+                Menu::SelectionUpdate(_tempEncoderCount[MENU_SCROL]);
+                _tempEncoderCount[MENU_SCROL] = EncoderCounts[MENU_SCROL];
+                #ifdef LCD_DEBUG
+                    Serial.print("\nEncoder SCROL count = "+String((int32_t)_enc->getCount()));
+                    Serial.printf("\ntempEncoder SCROL count = %u",_tempEncoderCount[MENU_SCROL]);
+                #endif
+            }
+            else
+            {
+                Menu::SelectionValueUpdate();
+                #ifdef ENC_DEBUG
+                    Serial.print("\nEncoder EDIT count = "+String((int32_t)_enc->getCount()));
+                    Serial.printf("\ntempEncoder EDIT count = %u",_tempEncoderCount[MENU_EDIT]);
+                #endif
+            }
+            
         }
-        else
+        if(_encBtn->wasPressed())
         {
-            menuMode = MENU_SCROL;
-            _enc->setCount(EncoderCounts[MENU_SCROL]);
-            #ifdef LCD_DEBUG
-                Serial.print("\nMenu in modalita SCROL");
-            #endif
-        }    
+            if (menuMode == MENU_SCROL)
+            {
+                menuMode = MENU_EDIT;
+                Menu::LoadSelectionValue();
+                #ifdef LCD_DEBUG
+                    Serial.print("\nMenu in modalita EDIT");
+                #endif
+            }
+            else
+            {
+                menuMode = MENU_SCROL;
+                _enc->setCount(EncoderCounts[MENU_SCROL]);
+                #ifdef LCD_DEBUG
+                    Serial.print("\nMenu in modalita SCROL");
+                #endif
+            }    
+        }
     }
+}
+
+void Menu::FirstRead()
+{
+    //Disegno i primi valori del menu
+    Menu::DisplayedValueUpdate(0, MenuValues[0], MenuValueType::NUMBER);
+    Menu::DisplayedValueUpdate(1, MenuValues[1], MenuValueType::SYMBOL);
 }
 
 void Menu::DisplayedValueUpdate(uint8_t MenuEntityNum, int32_t value, MenuValueType ValueType)
