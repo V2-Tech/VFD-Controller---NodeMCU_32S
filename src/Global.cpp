@@ -16,7 +16,7 @@ Global::Global()
     MenuEntitys.push_back({"RPM:", {0,2,0}});
     MenuEntitys.push_back({"PWR:", {11,2,0}});
     MenuEntitys.push_back({"STATUS:", {0,3,0}});
-    MenuEntitys.push_back({"ERR:", {11,3,0}});
+    //MenuEntitys.push_back({"ERR:", {11,3,0}});
 }
 
 void Global::begin()

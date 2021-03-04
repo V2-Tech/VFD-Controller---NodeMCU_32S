@@ -18,7 +18,7 @@
 #define MONITOR_ACTSPEED_ADDR 0x703C //%*100
 #define MONITOR_SETPOINT 0x701C //%*100
 #define MONITOR_STATUS_ADDR 0x703D // Serve testarlo
-#define MONITOR_FAULTCODE_ADDR 0x703E //Guardare manuale. Enumeratore decodificatrore?
+#define MONITOR_FAULTCODE_ADDR 0x703E //NON RAGGIUNGIBILE Guardare manuale. Enumeratore decodificatrore?
 
 enum VFDCommand : uint16_t
 {

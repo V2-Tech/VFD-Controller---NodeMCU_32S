@@ -89,6 +89,7 @@ void BtnUpdate()
                 vfd.reset();
                 Serial.print("\nPuls stop holded. Send RESET command");
         }
+        /*
         if (VDFErrorBtn.wasPressed())
         {
                 uint32_t tempVal = vfd.getFaultCode();
@@ -100,4 +101,5 @@ void BtnUpdate()
                 menu.DisplayedValueUpdate(5, 0, MenuValueType::NUMBER);
                 Serial.print("\nPuls vdf err released. Reset ERROR CODE");
         }
+        */
 }
