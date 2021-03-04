@@ -3,7 +3,7 @@
 #include <HardwareSerial.h>
 #include <ModbusMaster.h>
 
-//#define COMM_DEBUG
+#define COMM_DEBUG
 //#define CONVERSION_DEBUG
 
 //INDIRIZZI MODBUS WK600

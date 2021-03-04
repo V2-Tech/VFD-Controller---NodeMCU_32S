@@ -147,16 +147,16 @@ int32_t WK600::getActSpeed()
 {
     uint8_t Return = _CommMaster->readHoldingRegisters(MONITOR_ACTSPEED_ADDR,1);
     if (Return==_CommMaster->ku8MBSuccess){
-        int32_t tempVal = _CommMaster->getResponseBuffer(0)/100;
+        int32_t tempVal = abs(_CommMaster->getResponseBuffer(0));
         #ifdef COMM_DEBUG
-            Serial.printf("\nLettura velocita attuale avvenuta: %u", tempVal);
+            Serial.printf("\nLettura velocita attuale avvenuta: HIGH %d", tempVal);
         #endif
         _CommMaster->clearResponseBuffer();
-        return abs(tempVal);
+        return tempVal/100;
     }
     else{
         #ifdef COMM_DEBUG
-            Serial.printf("\nErrore lettura elocita attuale: %u",Return);
+            Serial.printf("\nErrore lettura velocita attuale: %d",Return);
             _CommMaster->clearResponseBuffer();
         #endif
         return 0;

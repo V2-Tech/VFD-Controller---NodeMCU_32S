@@ -16,6 +16,7 @@
         "istream": "cpp",
         "ostream": "cpp",
         "sstream": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "cmath": "cpp"
     }
 }

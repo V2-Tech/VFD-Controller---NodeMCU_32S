@@ -8,7 +8,7 @@
 #include <string>
 #include <sstream>
 
-#define ENC_DEBUG 
+//#define ENC_DEBUG 
 //#define LCD_DEBUG
 
 typedef enum

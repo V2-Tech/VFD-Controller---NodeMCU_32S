@@ -13,7 +13,7 @@ Global::Global()
     motorParameter = {2850, 5, 400, 50};
     MenuEntitys.push_back({"RPM DES:", {6,0,0}}); //{Stringa, x-pos, y-pos, pag}
     MenuEntitys.push_back({"DIR DES:", {6,1,0}});
-    MenuEntitys.push_back({"RPM:", {0,2,0}});
+    //MenuEntitys.push_back({"RPM:", {0,2,0}});
     MenuEntitys.push_back({"PWR:", {11,2,0}});
     MenuEntitys.push_back({"STATUS:", {0,3,0}});
     //MenuEntitys.push_back({"ERR:", {11,3,0}});
