@@ -349,11 +349,10 @@ void Menu::LoadSelectionValue()
 void Menu::GraphicValueUpdate()
 {
     int32_t tempVal;
-    /*
     tempVal = _vfd->getActSpeed();
     tempVal = _vfd->PercentToRPM(tempVal, _motorParameters);
     Menu::DisplayedValueUpdate(2,tempVal,MenuValueType::NUMBER);
-    */
+    
     tempVal = _vfd->getActOutPower();
     Menu::DisplayedValueUpdate(3,tempVal,MenuValueType::NUMBER);
 
