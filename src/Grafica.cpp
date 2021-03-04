@@ -63,7 +63,7 @@ void Menu::begin(LiquidCrystal_I2C &lcd, uint8_t lcd_cols,uint8_t lcd_rows, std:
 
     //Genero il vettore dei valori associati alle voci MENU SCROL modificabili tramite rotazione encoder
     MenuValues.push_back((int32_t)_vfd->getActSetpoint());
-    MenuValues.push_back(0);
+    MenuValues.push_back(1);
 
     //Inizializzo il valore del encoder
     _enc->setCount(MenuValues[0]);

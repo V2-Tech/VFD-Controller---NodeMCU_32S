@@ -4,7 +4,7 @@
 #include <ModbusMaster.h>
 
 //#define COMM_DEBUG
-#define CONVERSION_DEBUG
+//#define CONVERSION_DEBUG
 
 //INDIRIZZI MODBUS WK600
 #define SETPOINT_ADDR 0x1000 //%*100
