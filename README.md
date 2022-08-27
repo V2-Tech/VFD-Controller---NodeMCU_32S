@@ -1,2 +1,2 @@
 # VFD-Controller-NodeMCU_32S
-Controller for an Automatic saw 
+Automatic saw machine controller: PLC and HMI.
